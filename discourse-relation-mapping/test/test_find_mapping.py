@@ -17,10 +17,10 @@ class Test_Lexconn (unittest.TestCase):
         print(emission)
         entries = np.array([[0, 0], [0, 1], [1, 1], [1, 2]])
         lexconn = Lexconn(emission, entries)
-        got_mapping = lexconn.get_mapping()
+        got_mapping = lexconn.get_mapping(5000)
         print(got_mapping)
         expected_mapping = np.array([[0.4267, 0.5733, 0.0], [0.0, 0.3963, 0.6037]])
-        npt.assert_almost_equal(got_mapping, expected_mapping, decimal=4)
+        npt.assert_almost_equal(got_mapping, expected_mapping, decimal=3)
         pass
 
 if __name__ == "__main__":

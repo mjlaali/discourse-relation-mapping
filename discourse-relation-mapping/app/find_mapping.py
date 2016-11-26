@@ -28,12 +28,14 @@ class Lexconn:
         one_hot = ar == np.arange(ar_range)
         return one_hot.astype(np.float32)
 
-    def get_mapping(self):
+    def get_mapping(self, max_iterations=None):
         """ find the best mapping according to the given emission and entries matrix
         Return:
             a mapping between PDTB relations and RST relations. Mapping[i, j] = P(RST_j|PDTB_i)
         """
-        
+        if max_iterations is None:
+            max_iterations = 50000
+            
         sdc = Lexconn.__one_hot_encoding(self.__entries[:, 0], self.__dc_cnt)
         src = Lexconn.__one_hot_encoding(self.__entries[:, 1], self.__rst_cnt)
 
@@ -49,13 +51,13 @@ class Lexconn:
         init = tf.initialize_all_variables()
         with tf.Session() as sess:
             sess.run(init)
-            print(sess.run(m))
+            #print(sess.run(m))
             print(sess.run(sum_log_score))
 
             # Fit the line.
             np.set_printoptions(precision=4)
             np.set_printoptions(suppress=True)
-            for step in range(50000):
+            for step in range(max_iterations):
                 sess.run(optimizer)
                 if step % 1000 == 0:
                     print(step, sess.run(sum_log_score))
@@ -63,7 +65,7 @@ class Lexconn:
 
 if __name__ == "__main__":
     emission = np.loadtxt('../emission.txt')
-    lexconn = np.loadtxt('../lexconn.txt')
+    lexconn = np.loadtxt('../entries.txt')
     print(lexconn.shape)
     print(emission.shape)
     print(np.max(lexconn, axis=0))
